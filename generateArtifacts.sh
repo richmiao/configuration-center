@@ -9,17 +9,17 @@ cryptogen generate --config=./cryptogen.yaml
 configtxgen -profile OneOrgsChannel -channelID confighubchannel -outputCreateChannelTx confighubchannel.tx --configPath .
 
 
-cd ./crypto-config/peerOrganizations/org1.example.com/ca
+cd ./crypto-config/peerOrganizations/org1.cc.com/ca
 file=$(ls *_sk)
 mv "${file}" org1ca_sk
 cd ../../../..
 
-cd ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/
+cd ./crypto-config/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp/keystore/
 file=$(ls *_sk)
 mv "${file}" org1ca_sk
 cd ../../../../../../..
 
-cd ./crypto-config/ordererOrganizations/example.com/ca
+cd ./crypto-config/ordererOrganizations/cc.com/ca
 file=$(ls *_sk)
 mv "${file}" ordererca_sk
 cd ../../../..

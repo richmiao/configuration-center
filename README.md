@@ -13,7 +13,7 @@ It will introduce a chaincode, that will allow to expose APIs, that are similar 
 Indexes will be supported.
 
 An application should live in a single Hyperledger Fabric channel. For each Collection a new chaincode will be instantiated.
-the code is actually the same souce-code file, but installed with the collection name as its name. 
+the code is actually the same source-code file, but installed with the collection name as its name. 
 This will make full use of Fabric's channel/chaincode structure. 
 
 
@@ -25,28 +25,31 @@ This will make full use of Fabric's channel/chaincode structure.
 
 # start this project
 
-
+# cryptogen generate the cert related
+# configtxgen generate entities like the peer and channel
 docker run -it -v=$(pwd)/artifacts/channel:/work -w=/work --network=artifacts_default  hyperledger/fabric-tools bash
   cryptogen generate --config=./cryptogen.yaml
   configtxgen -profile OneOrgsChannel -channelID ConfigHubChannel -outputCreateChannelTx ConfigHubChannel.tx --configPath .
   
-  cd ./crypto-config/peerOrganizations/org1.example.com/ca
+  cd ./crypto-config/peerOrganizations/org1.cc.com/ca
   file=$(ls *_sk)
   mv "${file}" org1ca_sk
   cd ../../../..
 
-  cd ./crypto-config/ordererOrganizations/example.com/ca
+  cd ./crypto-config/ordererOrganizations/cc.com/ca
   file=$(ls *_sk)
   mv "${file}" org1ca_sk
   cd ../../../..
 
+# generate the genesis.block
   configtxgen -profile OneOrgsOrdererGenesis -outputBlock ./genesis.block --configPath .
 
   exit
 
-
+# put everything in one
 ./runApp.sh
 
+ # start the api application
 docker run -it -v=$(pwd):/work -w=/work --network=artifacts_default -p=4000:4000 node bash
   export NODE_TLS_REJECT_UNAUTHORIZED=0
   npm config set strict-ssl false

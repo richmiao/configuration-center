@@ -118,7 +118,7 @@ app.post('/channels', async function(req, res) {
 	var channelName = req.body.channelName;
 	var channelConfigPath = req.body.channelConfigPath;
 	logger.debug('Channel name : ' + channelName);
-	logger.debug('channelConfigPath : ' + channelConfigPath); //../artifacts/channel/mychannel.tx
+	logger.debug('channelConfigPath : ' + channelConfigPath); //../artifacts/channel/confighubchannel.tx
 	if (!channelName) {
 		res.json(getErrorMessage('\'channelName\''));
 		return;

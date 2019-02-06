@@ -31,7 +31,7 @@ docker run -it -v=$(pwd):/work -w=/work --network=artifacts_default  hyperledger
 docker ps -a | grep -v 'NAMES'| awk '{print $1}'|xargs docker rm -f
 docker volume ls -qf dangling=true | xargs docker volume rm
 docker volume prune -f
-node ./scripts/sleep.js 200
+node ./scripts/sleep.js 50
 
 restartNetwork
 

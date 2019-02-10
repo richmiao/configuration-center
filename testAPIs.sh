@@ -36,7 +36,7 @@ while getopts "h?l:" opt; do
 done
 
 
-CC_SRC_PATH="$PWD/artifacts/src/github.com/example_cc/node"
+CC_SRC_PATH="$PWD/artifacts/src/gosrc"
 
 
 echo "POST request Enroll on org1  ..."
@@ -71,7 +71,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"channelName":"confighubchannel",
-	"channelConfigPath":"../artifacts/channel/Config.tx"
+	"channelConfigPath":"../artifacts/channel/ConfigHubChannel.tx"
 }'
 echo
 echo
@@ -83,7 +83,7 @@ curl -s -X POST \
   -H "authorization: Bearer $org1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org1.cc.com","peer1.org1.cc.com"]
+	"peers": ["peer0.org1.cc.com"]
 }'
 echo
 echo
@@ -107,7 +107,7 @@ curl -s -X POST \
   -H "authorization: Bearer $org1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"configUpdatePath":"../artifacts/channel/org1MSPanchors.tx"
+	"configUpdatePath":"../artifacts/channel/Org1MSPanchors.tx"
 }'
 echo
 echo
@@ -131,8 +131,8 @@ curl -s -X POST \
   -H "authorization: Bearer $org1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org1.cc.com\",\"peer1.org1.cc.com\"],
-	\"chaincodeName\":\"mycc\",
+	\"peers\": [\"peer0.org1.cc.com\"],
+	\"chaincodeName\":\"configurationCC\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
 	\"chaincodeVersion\":\"v0\"
@@ -148,7 +148,7 @@ echo
 #   -H "content-type: application/json" \
 #   -d "{
 # 	\"peers\": [\"peer0.org2.cc.com\",\"peer1.org2.cc.com\"],
-# 	\"chaincodeName\":\"mycc\",
+# 	\"chaincodeName\":\"configurationCC\",
 # 	\"chaincodePath\":\"$CC_SRC_PATH\",
 # 	\"chaincodeType\": \"$LANGUAGE\",
 # 	\"chaincodeVersion\":\"v0\"
@@ -163,7 +163,7 @@ curl -s -X POST \
   -H "authorization: Bearer $org1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"chaincodeName\":\"mycc\",
+	\"chaincodeName\":\"configurationCC\",
 	\"chaincodeVersion\":\"v0\",
 	\"chaincodeType\": \"$LANGUAGE\",
 	\"args\":[\"a\",\"100\",\"b\",\"200\"]
@@ -174,7 +174,7 @@ echo
 # echo "POST invoke chaincode on peers of org1 and Org2"
 # echo
 # TRX_ID=$(curl -s -X POST \
-#   http://localhost:4000/channels/confighubchannel/chaincodes/mycc \
+#   http://localhost:4000/channels/confighubchannel/chaincodes/configurationCC \
 #   -H "authorization: Bearer $org1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d '{
@@ -186,10 +186,10 @@ echo
 # echo
 # echo
 
-echo "GET query chaincode on peer1 of org1"
+echo "GET query chaincode on peer0 of org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/confighubchannel/chaincodes/mycc?peer=peer0.org1.cc.com&fcn=query&args=%5B%22a%22%5D" \
+  "http://localhost:4000/channels/confighubchannel/chaincodes/configurationCC?peer=peer0.org1.cc.com&fcn=query&args=%5B%22a%22%5D" \
   -H "authorization: Bearer $org1_TOKEN" \
   -H "content-type: application/json"
 echo

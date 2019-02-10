@@ -1,7 +1,7 @@
 {
-  "name": "balance-transfer",
+  "name": "configuration-center",
   "version": "1.0.0",
-  "description": "A balance-transfer example node program to demonstrate using node.js SDK APIs",
+  "description": "A configuration-center example node program to demonstrate using node.js SDK APIs",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -9,7 +9,7 @@
   },
   "keywords": [
     "fabric-client sample app",
-    "balance-transfer node sample",
+    "configuration-center node sample",
     "v1.0 fabric nodesdk sample"
   ],
   "engines": {
@@ -35,6 +35,7 @@
     "superstruct": "^0.6.0",
     "tasyncexpress": "^1.0.2",
     "tnfetch": "0.0.6",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "x509": "^0.3.4"
   }
 }

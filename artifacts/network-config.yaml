@@ -75,14 +75,14 @@ channels:
     # this list with the query results of getInstalledChaincodes() and getInstantiatedChaincodes()
     chaincodes:
       # the format follows the "cannonical name" of chaincodes by fabric code
-      - mycc:v0
+      - configurationCC:v0
 
 #
 # list of participating organizations in this network
 #
 organizations:
   org1:
-    mspid: org1MSP
+    mspid: Org1MSP
 
     peers:
       - peer0.org1.cc.com
@@ -103,9 +103,9 @@ organizations:
     # this way. The SDK should allow applications to set the org admin identity via APIs, and only use
     # this route as an alternative when it exists.
     adminPrivateKey:
-      path: artifacts/channel/crypto-config/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp/keystore/org1ca_sk
+      path: crypto-config/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp/keystore/org1ca_sk
     signedCert:
-      path: artifacts/channel/crypto-config/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp/signcerts/Admin@org1.cc.com-cert.pem
+      path: crypto-config/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp/signcerts/Admin@org1.cc.com-cert.pem
 
 
 #
@@ -123,7 +123,7 @@ orderers:
       ssl-target-name-override: orderer.cc.com
 
     tlsCACerts:
-      path: artifacts/channel/crypto-config/ordererOrganizations/cc.com/orderers/orderer.cc.com/tls/ca.crt
+      path: crypto-config/ordererOrganizations/cc.com/orderers/orderer.cc.com/tls/ca.crt
 
 #
 # List of peers to send various requests to, including endorsement, query
@@ -137,7 +137,7 @@ peers:
     # grpcOptions:
     #   ssl-target-name-override: peer0.org1.cc.com
     # tlsCACerts:
-    #   path: artifacts/channel/crypto-config/peerOrganizations/org1.cc.com/peers/peer0.org1.cc.com/tls/ca.crt
+    #   path: crypto-config/peerOrganizations/org1.cc.com/peers/peer0.org1.cc.com/tls/ca.crt
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows

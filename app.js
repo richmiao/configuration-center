@@ -104,6 +104,7 @@ app.post('/users', async function(req, res) {
 	let response = await helper.getRegisteredUser(username, orgname, true);
 	logger.debug('-- returned from registering the username %s for organization %s',username,orgname);
 	if (response && typeof response !== 'string') {
+		logger.debug(response);
 		logger.debug('Successfully registered the username %s for organization %s',username,orgname);
 		res.json(response);
 	} else {

@@ -1,0 +1,135 @@
+#
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+version: '2'
+
+services:
+
+  ca-org1:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org1
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.cc.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/org1ca_sk
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      # - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.cc.com-cert.pem
+      # - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/org1ca_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.cc.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca-org1
+
+  # ca.org2.cc.com:
+  #   image: hyperledger/fabric-ca
+  #   environment:
+  #     - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+  #     - FABRIC_CA_SERVER_CA_NAME=ca-org2
+  #     - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.cc.com-cert.pem
+  #     - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a7d47efa46a6ba07730c850fed2c1375df27360d7227f48cdc2f80e505678005_sk
+  #     - FABRIC_CA_SERVER_TLS_ENABLED=true
+  #     - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.cc.com-cert.pem
+  #     - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a7d47efa46a6ba07730c850fed2c1375df27360d7227f48cdc2f80e505678005_sk
+  #   ports:
+  #     - "8054:7054"
+  #   command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+  #   volumes:
+  #     - ./crypto-config/peerOrganizations/org2.cc.com/ca/:/etc/hyperledger/fabric-ca-server-config
+  #   container_name: ca_peerOrg2
+
+  orderer.cc.com:
+    container_name: orderer.cc.com
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/crypto/orderer/msp
+      # - ORDERER_GENERAL_TLS_ENABLED=true
+      # - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/crypto/orderer/tls/server.key
+      # - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/crypto/orderer/tls/server.crt
+      # - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/crypto/orderer/tls/ca.crt, /etc/hyperledger/crypto/peerorg1/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    ports:
+      - 7050:7050
+    volumes:
+        - ./config:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/cc.com/orderers/orderer.cc.com/:/etc/hyperledger/crypto/orderer
+        - ./crypto-config/peerOrganizations/org1.cc.com/peers/peer0.org1.cc.com/:/etc/hyperledger/crypto/peerorg1
+    # command: sh -c 'npm config set strict-ssl false && npm install && npm run watch'
+
+  peer0.org1.cc.com:
+    container_name: peer0.org1.cc.com
+    image: hyperledger/fabric-peer
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CORE_PEER_ID=peer0.org1.cc.com
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_ADDRESS=peer0.org1.cc.com:7051
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=somePeer.org1.cc.com:7051      
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.cc.com:7051
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.org1.cc.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=administrator
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=administratorpassword
+    ports:
+      - 7051:7051
+      - 7053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/org1.cc.com/peers/peer0.org1.cc.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/org1.cc.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer.cc.com
+    # command: sh -c 'npm config set strict-ssl false && npm install && npm run watch'
+
+  couchdb.peer0.org1.cc.com:
+    container_name: couchdb.peer0.org1.cc.com
+    image: hyperledger/fabric-couchdb:x86_64-0.4.5
+    environment:
+      - COUCHDB_USER=administrator
+      - COUCHDB_PASSWORD=administratorpassword
+    ports:
+      - "5984:5984"
+    volumes:
+       - ./peer0org1couchdbData/:/opt/couchdb/data
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=info
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.cc.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.cc.com/users/Admin@org1.cc.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+
+  webserver:
+    container_name: webserver
+    image: node:8.1.0
+    ports:
+      - "4000:4000"
+    working_dir: /work
+    environment:
+      # - TARGET_NETWORK=cc_network
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+      - ../:/work
+    command: sh -c 'npm config set strict-ssl false && npm install && npm run watch'

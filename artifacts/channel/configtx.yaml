@@ -30,10 +30,10 @@ Organizations:
     - &org1
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: org1MSP
+        Name: Org1MSP
 
         # ID to load the MSP definition as
-        ID: org1MSP
+        ID: Org1MSP
 
         MSPDir: crypto-config/peerOrganizations/org1.cc.com/msp
 

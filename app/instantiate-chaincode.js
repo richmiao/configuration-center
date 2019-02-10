@@ -53,7 +53,7 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			// The policy can be fulfilled when members from both orgs signed.
 			// 'endorsement-policy': {
 			//         identities: [
-			// 		{ role: { name: 'member', mspId: 'org1MSP' }},
+			// 		{ role: { name: 'member', mspId: 'Org1MSP' }},
 			// 		{ role: { name: 'member', mspId: 'Org2MSP' }}
 			//         ],
 			//         policy: {

@@ -19,7 +19,7 @@ x-type: "hlfv1"
 #
 # Describe what the target network is/does.
 #
-description: "Balance Transfer Network - client definition for org1"
+description: "Configuration Center Network - client definition for org1"
 
 #
 # Schema version of the content. Used by the SDK to apply the corresponding parsing rules.
